@@ -15,4 +15,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniCoursesDomain\MiniCoursesDomain.csproj" />
+    <ProjectReference Include="..\MiniCoursesRepository\MiniCoursesRepository.csproj" />
+  </ItemGroup>
+
 </Project>

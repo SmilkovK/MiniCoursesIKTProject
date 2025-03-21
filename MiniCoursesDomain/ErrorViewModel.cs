@@ -1,4 +1,4 @@
-namespace MiniCoursesIKTProject.Models
+namespace MiniCoursesDomain
 {
     public class ErrorViewModel
     {

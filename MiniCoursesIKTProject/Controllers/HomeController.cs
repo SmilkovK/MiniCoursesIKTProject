@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using MiniCoursesIKTProject.Models;
+using MiniCoursesDomain;
 using System.Diagnostics;
 
 namespace MiniCoursesIKTProject.Controllers
