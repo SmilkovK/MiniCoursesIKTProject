@@ -178,7 +178,7 @@ namespace MiniCoursesRepository.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Indeks")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .HasColumnType("text");

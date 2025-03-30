@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddIdentityCore<Student>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
@@ -51,9 +52,9 @@ using (var scope = app.Services.CreateScope())
     var RoleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var roles = new[]
     {
-         "Admin",
-         "Editor",
-         "Student"
+        "Admin",
+        "Editor",
+        "Student"
     };
     foreach (var role in roles)
     {
@@ -61,6 +62,7 @@ using (var scope = app.Services.CreateScope())
             await RoleManager.CreateAsync(new IdentityRole(role));
     }
 }
+
 using (var scope = app.Services.CreateScope())
 {
     var UserManager = scope.ServiceProvider.GetRequiredService<UserManager<Student>>();
@@ -85,7 +87,6 @@ using (var scope = app.Services.CreateScope())
         user.UserName = sitename;
         await UserManager.CreateAsync(user, password);
         await UserManager.AddToRoleAsync(user, "Admin");
-
     }
 
     if (await UserManager.FindByEmailAsync(email2) == null)
@@ -95,8 +96,8 @@ using (var scope = app.Services.CreateScope())
         user2.UserName = sitename2;
         await UserManager.CreateAsync(user2, passwrod2);
         await UserManager.AddToRoleAsync(user2, "Editor");
-
     }
+
     if (await UserManager.FindByEmailAsync(student1) == null)
     {
         var user3 = new Student();
@@ -107,7 +108,7 @@ using (var scope = app.Services.CreateScope())
         user3.Indeks = indeks;
         await UserManager.CreateAsync(user3, passwrod2);
         await UserManager.AddToRoleAsync(user3, "Student");
-
     }
 }
+
 await app.RunAsync();
