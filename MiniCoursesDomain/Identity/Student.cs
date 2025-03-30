@@ -9,7 +9,7 @@ namespace MiniCoursesDomain.Identity
 {
     public class Student : IdentityUser
     {
-        public string? Index { get; set; }
+        public string? Indeks { get; set; }
         public string? Name { get; set; }
         public string? LastName { get; set; }
     }

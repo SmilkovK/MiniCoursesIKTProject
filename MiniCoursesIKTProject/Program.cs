@@ -11,7 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<Student>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<Student>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
@@ -99,7 +99,7 @@ using (var scope = app.Services.CreateScope())
         user3.UserName = studentname;
         user3.Name = Name;
         user3.LastName = Prezime;
-        user3.Index = indeks;
+        user3.Indeks = indeks;
         await UserManager.CreateAsync(user3, passwrod2);
         await UserManager.AddToRoleAsync(user3, "Student");
 
