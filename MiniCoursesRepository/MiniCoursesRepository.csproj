@@ -16,4 +16,8 @@
     <Folder Include="Interface\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MiniCoursesDomain\MiniCoursesDomain.csproj" />
+  </ItemGroup>
+
 </Project>
