@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MiniCoursesDomain.Identity;
 
-namespace MiniCoursesRepository.Data
+namespace MiniCoursesRepository
 {
     public class ApplicationDbContext : IdentityDbContext<Student>
     {
