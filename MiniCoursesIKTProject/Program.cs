@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniCoursesDomain.Identity;
 using MiniCoursesRepository;
+using MiniCoursesRepository.Repository.Implementation;
+using MiniCoursesRepository.Repository.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IFIleRepository, FIleRepository>();
+builder.Services.AddScoped<IHomeworkRepository, HomeworkRepository>();
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 
 var app = builder.Build();
 

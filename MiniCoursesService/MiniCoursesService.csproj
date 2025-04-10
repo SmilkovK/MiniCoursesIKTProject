@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <Folder Include="Implementation\"/>
+        <Folder Include="Interfaces\" />
         <Folder Include="Interface\"/>
     </ItemGroup>
 
