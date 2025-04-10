@@ -1,16 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MiniCoursesDomain.Entities;
 
-namespace MiniCoursesDomain.Identity
+namespace MiniCoursesDomain.Identity;
+
+public class User : IdentityUser
 {
-    public class User : IdentityUser
-    {
-        public string? Indeks { get; set; }
-        public string? Name { get; set; }
-        public string? LastName { get; set; }
-    }
+    public string? Indeks { get; set; }
+    public string? Name { get; set; }
+    public string? LastName { get; set; }
+    public List<StudentSubject> SubjectsGrades { get; set; } = [];
+    public List<GradedFile> GradedFiles { get; set; } = [];
 }
