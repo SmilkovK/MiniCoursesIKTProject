@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MiniCoursesDomain.Identity
 {
-    public class Student : IdentityUser
+    public class User : IdentityUser
     {
         public string? Indeks { get; set; }
         public string? Name { get; set; }
