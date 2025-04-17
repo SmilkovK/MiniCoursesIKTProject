@@ -84,6 +84,12 @@ using (var scope = app.Services.CreateScope())
     var Name = "Kire";
     var Prezime = "Smilkov";
     var indeks = "211065";
+    ///////////////////////////////
+    var profesor1 = "stojmenskialeksandar@admin.com";
+    var profesorname = "stojmenskialeksandar@admin.com";
+    var ProfName = "Aleksandar";
+    var ProfPrezime = "Stojmenski";
+    //////////////////////////////
     if (await UserManager.FindByEmailAsync(email) == null)
     {
         var user = new User();
@@ -112,6 +118,16 @@ using (var scope = app.Services.CreateScope())
         user3.Indeks = indeks;
         await UserManager.CreateAsync(user3, passwrod2);
         await UserManager.AddToRoleAsync(user3, "Student");
+    }
+    if (await UserManager.FindByEmailAsync(profesor1) == null)
+    {
+        var admin1 = new User();
+        admin1.Email = profesor1;
+        admin1.UserName = profesorname;
+        admin1.Name = ProfName;
+        admin1.LastName = ProfPrezime;
+        await UserManager.CreateAsync(admin1, passwrod2);
+        await UserManager.AddToRoleAsync(admin1, "Admin");
     }
 }
 
