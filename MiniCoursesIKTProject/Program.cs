@@ -4,6 +4,8 @@ using MiniCoursesDomain.Identity;
 using MiniCoursesRepository;
 using MiniCoursesRepository.Repository.Implementation;
 using MiniCoursesRepository.Repository.Interfaces;
+using MiniCoursesService.Implementation;
+using MiniCoursesService.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +28,13 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddScoped(typeof(IStudentRepository), typeof(StudentRepository));
 builder.Services.AddScoped<IFIleRepository, FIleRepository>();
 builder.Services.AddScoped<IHomeworkRepository, HomeworkRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+
+builder.Services.AddTransient<IStudentService, StudentService>();
 
 var app = builder.Build();
 
