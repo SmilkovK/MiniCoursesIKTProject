@@ -9,8 +9,5 @@ namespace MiniCoursesRepository.Repository.Interfaces
         Task CreateAsync(User user, string password);
         Task UpdateAsync(User user);
         Task DeleteAsync(string id);
-        Task<User> GetUserByIdAsync(string id);
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task UpdateUserAsync(User user);
     }
 }

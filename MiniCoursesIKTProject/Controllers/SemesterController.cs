@@ -41,7 +41,7 @@ public class SemesterController : Controller
         model.StudentId = studentId;
         model.Status = SubjectRequestStatus.Pending;
 
-        var user = await _studentRepository.GetUserByIdAsync(model.StudentId);
+        var user = await _studentRepository.GetByIdAsync(model.StudentId);
         if (user == null)
         {
             ModelState.AddModelError("", "Student not found.");
@@ -49,7 +49,7 @@ public class SemesterController : Controller
         }
 
         user.SemesterApplications.Add(model);
-        await _studentRepository.UpdateUserAsync(user);
+        await _studentRepository.UpdateAsync(user);
 
         return RedirectToAction("ApplicationStatus");
     }
@@ -64,7 +64,7 @@ public class SemesterController : Controller
             return Unauthorized("User is not logged in.");
         }
 
-        var user = await _studentRepository.GetUserByIdAsync(studentId);
+        var user = await _studentRepository.GetByIdAsync(studentId);
         if (user == null)
         {
             return NotFound();
@@ -78,7 +78,7 @@ public class SemesterController : Controller
     [HttpGet]
     public async Task<IActionResult> ManageApplications()
     {
-        var users = await _studentRepository.GetAllUsersAsync();
+        var users = await _studentRepository.GetAllAsync();
         var pendingApplications = users
             .SelectMany(u => u.SemesterApplications)
             .Where(a => a.Status == SubjectRequestStatus.Pending)
@@ -91,7 +91,7 @@ public class SemesterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AcceptApplication(Guid id)
     {
-        var users = await _studentRepository.GetAllUsersAsync();
+        var users = await _studentRepository.GetAllAsync();
         var application = users
             .SelectMany(u => u.SemesterApplications)
             .FirstOrDefault(a => a.Id == id);
@@ -105,7 +105,7 @@ public class SemesterController : Controller
         var user = users.FirstOrDefault(u => u.SemesterApplications.Contains(application));
         if (user != null)
         {
-            await _studentRepository.UpdateUserAsync(user);
+            await _studentRepository.UpdateAsync(user);
         }
 
         return RedirectToAction("ManageApplications");
@@ -116,7 +116,7 @@ public class SemesterController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> RejectApplication(Guid id)
     {
-        var users = await _studentRepository.GetAllUsersAsync();
+        var users = await _studentRepository.GetAllAsync();
         var application = users
             .SelectMany(u => u.SemesterApplications)
             .FirstOrDefault(a => a.Id == id);
@@ -130,7 +130,7 @@ public class SemesterController : Controller
         var user = users.FirstOrDefault(u => u.SemesterApplications.Contains(application));
         if (user != null)
         {
-            await _studentRepository.UpdateUserAsync(user);
+            await _studentRepository.UpdateAsync(user);
         }
 
         return RedirectToAction("ManageApplications");
