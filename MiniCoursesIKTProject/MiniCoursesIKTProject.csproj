@@ -25,6 +25,7 @@
     <ItemGroup>
         <ProjectReference Include="..\MiniCoursesDomain\MiniCoursesDomain.csproj" />
         <ProjectReference Include="..\MiniCoursesRepository\MiniCoursesRepository.csproj" />
+        <ProjectReference Include="..\MiniCoursesService\MiniCoursesService.csproj" />
     </ItemGroup>
 
     <ItemGroup>
