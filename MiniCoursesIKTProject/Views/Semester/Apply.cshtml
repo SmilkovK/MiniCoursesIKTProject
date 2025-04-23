@@ -1,0 +1,41 @@
+@model MiniCoursesDomain.Entities.SemesterApplication
+
+@{
+    ViewData["Title"] = "Apply for Semester";
+}
+
+<h1>Apply for Semester</h1>
+
+<form asp-action="Apply" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="Semester" class="control-label"></label>
+        <select asp-for="Semester" class="form-control" asp-items="Html.GetEnumSelectList<MiniCoursesDomain.Enums.Semester>()">
+            <option value="">Select Semester</option>
+        </select>
+        <span asp-validation-for="Semester" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SemesterType" class="control-label"></label>
+        <select asp-for="SemesterType" class="form-control" asp-items="Html.GetEnumSelectList<MiniCoursesDomain.Enums.SemesterType>()">
+            <option value="">Select Semester Type</option>
+        </select>
+        <span asp-validation-for="SemesterType" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Year" class="control-label"></label>
+        <input asp-for="Year" class="form-control" />
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Apply" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
