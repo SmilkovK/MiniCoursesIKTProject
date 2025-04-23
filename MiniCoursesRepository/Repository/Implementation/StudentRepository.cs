@@ -2,6 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using MiniCoursesDomain.Identity;
 using MiniCoursesRepository.Repository.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MiniCoursesRepository.Repository.Implementation
 {
@@ -25,21 +29,26 @@ namespace MiniCoursesRepository.Repository.Implementation
         {
             return await _userManager.Users
                 .Include(u => u.SemesterApplications)
+                    .ThenInclude(sa => sa.Subjects)
+                        .ThenInclude(ss => ss.Subject)
                 .ToListAsync();
         }
 
         public async Task<User> GetByIdAsync(string id)
         {
-            var user = await _userManager.Users
+            return await _userManager.Users
                 .Include(u => u.SemesterApplications)
+                    .ThenInclude(sa => sa.Subjects)
+                        .ThenInclude(ss => ss.Subject)
                 .FirstOrDefaultAsync(u => u.Id == id);
-            return user;
         }
 
         public async Task UpdateAsync(User user)
         {
             var existing = await _userManager.Users
                 .Include(u => u.SemesterApplications)
+                    .ThenInclude(sa => sa.Subjects)
+                        .ThenInclude(ss => ss.Subject)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             if (existing == null)

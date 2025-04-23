@@ -12,6 +12,7 @@
         <th>Semester</th>
         <th>Type</th>
         <th>Year</th>
+        <th>Subjects</th>
         <th>Status</th>
     </tr>
     </thead>
@@ -22,6 +23,14 @@
             <td>@application.Semester</td>
             <td>@application.SemesterType</td>
             <td>@application.Year</td>
+            <td>
+                <ul>
+                    @foreach (var subject in application.Subjects)
+                    {
+                        <li>@subject.Subject?.Name (@subject.Subject?.Code)</li>
+                    }
+                </ul>
+            </td>
             <td>@application.Status</td>
         </tr>
     }

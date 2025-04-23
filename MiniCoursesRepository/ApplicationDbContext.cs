@@ -20,6 +20,11 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .HasOne(s => s.Professor)
             .WithMany()
             .HasForeignKey(s => s.ProfessorId);
+        
+        modelBuilder.Entity<SemesterApplication>()
+            .HasMany(sa => sa.Subjects)
+            .WithOne() //
+            .HasForeignKey("SemesterApplicationId");
     }
 
     public DbSet<GradedFile> GradedFiles { get; set; }
