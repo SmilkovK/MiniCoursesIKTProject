@@ -45,7 +45,6 @@ namespace MiniCoursesRepository.Repository.Implementation
             if (existing == null)
                 throw new Exception("User not found.");
 
-            // Update basic user properties
             existing.Name = user.Name;
             existing.LastName = user.LastName;
             existing.Email = user.Email;
