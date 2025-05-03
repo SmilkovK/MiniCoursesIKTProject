@@ -17,7 +17,7 @@ namespace MiniCoursesService.Interface
         Task UpdateAsync(User user);
         Task DeleteAsync(string id);
 
-        Task<Dictionary<User, List<string>>> GetUsersByRoleAsync(string role = null);
+        Task<Dictionary<User, List<string>>> GetUsersByRolesAsync(List<string> roles = null);
         Task<Tuple<User, List<string>>> GetUserWithRolesByIdAsync(string id);
 
     }

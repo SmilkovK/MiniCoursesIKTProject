@@ -32,7 +32,13 @@
                     </svg>
                     <div class="ms-4">
                         <h6 class="mb-0">@user.Key.Name @user.Key.LastName | @(string.Join(", ", user.Value))</h6>
-                        <small class="text-muted">@user.Key.UserName | Indeks: @user.Key.Indeks</small>
+                        <small class="text-muted">
+                            @user.Key.UserName
+                            @if (user.Value.Contains("Student"))
+                            {
+                                <text> | Indeks: @user.Key.Indeks</text>
+                            }
+                        </small>
                     </div>
                 </div>
 
