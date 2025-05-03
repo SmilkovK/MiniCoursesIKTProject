@@ -5,10 +5,10 @@ using MiniCoursesDomain.DTO.ViewModels;
 using MiniCoursesDomain.Entities;
 using MiniCoursesDomain.Identity;
 using MiniCoursesRepository.Repository.Interfaces;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using MiniCoursesDomain.Enums;
 using MiniCoursesRepository;
 
@@ -167,14 +167,43 @@ public class HomeworkController : Controller
             return Unauthorized();
         }
 
-        // Check if user already uploaded a file
         if (user.GradedFiles.Any(gf => gf.HomeworkId == homeworkId))
         {
             TempData["Error"] = "You have already uploaded a file for this homework.";
             return RedirectToAction(nameof(Details), new { id = homeworkId });
         }
 
-        // Save file to disk
+        if (!file.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            TempData["Error"] = "Only PDF files are allowed.";
+            return RedirectToAction(nameof(Details), new { id = homeworkId });
+        }
+
+        string pdfText;
+        try
+        {
+            using (var stream = file.OpenReadStream())
+            using (var pdfReader = new PdfReader(stream))
+            using (var pdfDocument = new PdfDocument(pdfReader))
+            {
+                var textBuilder = new StringBuilder();
+                for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
+                {
+                    var page = pdfDocument.GetPage(i);
+                    var text = PdfTextExtractor.GetTextFromPage(page, new SimpleTextExtractionStrategy());
+                    textBuilder.Append(text);
+                }
+                pdfText = textBuilder.ToString();
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = $"Failed to read PDF content: {ex.Message}";
+            return RedirectToAction(nameof(Details), new { id = homeworkId });
+        }
+        
+        Console.WriteLine(pdfText); //TODO: call the AI API here
+
         var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
         if (!Directory.Exists(uploadsDir))
         {
