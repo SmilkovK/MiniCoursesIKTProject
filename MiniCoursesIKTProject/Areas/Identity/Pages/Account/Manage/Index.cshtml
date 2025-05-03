@@ -1,5 +1,5 @@
 ﻿@page
-@model IndexModel
+@model MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage.IndexModel
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
@@ -9,7 +9,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 
 <div class="container mt-4">
-        <div class="card p-4 shadow-sm rounded-4 bg-light mb-4">
+    <div class="card p-4 shadow-sm rounded-4 bg-light mb-4">
         <div class="row align-items-center">
             <div class="col-md-2 text-center">
                 <i class="bi bi-person-circle" style="font-size: 4rem; color: #5e3ea1;"></i>
@@ -36,15 +36,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < 4; i++)
+                    @if (Model.SubjectsGrades.Any())
+                    {
+                        @foreach (var subject in Model.SubjectsGrades)
+                        {
+                            <tr>
+                                <td>@subject.Subject?.Name</td>
+                                <td>
+                                    <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
+                                        @(subject.Grade?.ToString() ?? "Not graded")
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr>
-                            <td>Subject name</td>
-                            <td>
-                                <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
-                                    10
-                                </div>
-                            </td>
+                            <td colspan="2" class="text-center">No enrolled subjects.</td>
                         </tr>
                     }
                 </tbody>
