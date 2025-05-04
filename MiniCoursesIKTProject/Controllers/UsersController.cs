@@ -20,11 +20,15 @@ namespace MiniCoursesIKTProject.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index(string selectedRole = null)
+        public async Task<IActionResult> Index(string selectedRole = "Student,Professor")
         {
-            var roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            var roles = new List<string> { "Student", "Professor" };
 
-            var usersWithRoles = await _userService.GetUsersByRoleAsync(selectedRole);
+            List<string> selectedRoles = string.IsNullOrEmpty(selectedRole)
+                ? roles
+                : selectedRole.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()).ToList();
+
+            var usersWithRoles = await _userService.GetUsersByRolesAsync(selectedRoles);
 
             ViewBag.SelectedRole = selectedRole;
             ViewBag.Roles = roles;
@@ -34,7 +38,10 @@ namespace MiniCoursesIKTProject.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var roleNames = _roleManager.Roles.Select(r => r.Name).ToList();
+            var roleNames = _roleManager.Roles
+            .Where(r => r.Name == "Editor" || r.Name == "Professor" || r.Name == "Student")
+            .Select(r => r.Name)
+            .ToList();
 
             var roles = roleNames
                 .Select(role => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem

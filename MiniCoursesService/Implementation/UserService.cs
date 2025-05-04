@@ -33,25 +33,29 @@ namespace MiniCoursesService.Implementation
 
         public Task DeleteAsync(string id) => _userRepository.DeleteAsync(id);
 
-        public async Task<Dictionary<User, List<string>>> GetUsersByRoleAsync(string role = null)
+        public async Task<Dictionary<User, List<string>>> GetUsersByRolesAsync(List<string> roles = null)
         {
             var users = await _userRepository.GetAllAsync();
             var userRoleDictionary = new Dictionary<User, List<string>>();
 
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user);
+                var userRoles = await _userManager.GetRolesAsync(user);
 
-                if (!string.IsNullOrEmpty(role) && !roles.Contains(role))
+                if (roles != null && roles.Any())
                 {
-                    continue;
+                    if (!userRoles.Any(r => roles.Contains(r)))
+                    {
+                        continue;
+                    }
                 }
 
-                userRoleDictionary[user] = roles.ToList();
+                userRoleDictionary[user] = userRoles.ToList();
             }
 
             return userRoleDictionary;
         }
+
 
         public async Task<Tuple<User, List<string>>> GetUserWithRolesByIdAsync(string id)
         {
