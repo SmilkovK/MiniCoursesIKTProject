@@ -74,12 +74,12 @@ namespace MiniCoursesIKTProject.Controllers
         [HttpGet]
         public async Task<IActionResult> Grades(string id)
         {
-            var user = await _userService.GetUserWithRolesByIdAsync(id);
+            var user = await _userService.GetByIdAsync(id);
             if (user == null)
                 return NotFound();
 
             //TODO - Add service method for listing subjects for student
-            return View();
+            return View(user);
         }
 
         [HttpGet]

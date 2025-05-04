@@ -27,25 +27,33 @@
 
     <div class="card p-4 shadow-sm rounded-4 bg-light">
         <h5 class="mb-3">Subjects & Grades</h5>
+        <a asp-page-handler="ExportStudentGrades" class="btn btn-primary" target="_blank">
+            Export Grades
+        </a>
         <div style="max-height: 250px; overflow-y: auto;">
             <table class="table table-borderless">
                 <thead class="fw-bold">
                     <tr>
                         <th>Subject name</th>
+                        <th>Year</th>
                         <th style="width: 100px;">Grade</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < 4; i++)
+                    @foreach (var sg in Model.SubjectsGrades)
                     {
-                        <tr>
-                            <td>Subject name</td>
-                            <td>
-                                <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
-                                    10
-                                </div>
-                            </td>
-                        </tr>
+                        if (sg.Grade.HasValue)
+                        {
+                            <tr>
+                                <td>@sg.Subject.Name</td>
+                                <td>@sg.Subject.Year</td>
+                                <td>
+                                    <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
+                                        @sg.Grade
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>

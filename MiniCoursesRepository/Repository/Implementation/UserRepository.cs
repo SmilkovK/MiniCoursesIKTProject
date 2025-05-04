@@ -35,6 +35,8 @@ namespace MiniCoursesRepository.Repository.Implementation
                 .Include(u => u.SemesterApplications)
                     .ThenInclude(sa => sa.Subjects)
                         .ThenInclude(ss => ss.Subject)
+                .Include(u => u.SubjectsGrades)
+                    .ThenInclude(sg => sg.Subject)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 

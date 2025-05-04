@@ -5,27 +5,36 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using MiniCoursesDomain.Entities;
 using MiniCoursesDomain.Identity;
+using MiniCoursesService.Interface;
+using GemBox.Document;
+using GemBox.Document.Tables;
 
 namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {
         private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
         private readonly SignInManager<User> _signInManager;
 
         public IndexModel(
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager,
+            IUserService userService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userService = userService;
+            ComponentInfo.SetLicense("FREE-LIMITED-KEY");
         }
 
         /// <summary>
@@ -37,6 +46,7 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
         public string Email { get; set; }
         public string Indeks { get; set; }
         public string Role { get; set; }
+        public List<StudentSubject> SubjectsGrades { get; set; }
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -78,6 +88,7 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
             Email = user.Email;
             Indeks = user.Indeks;
             Role = roles.FirstOrDefault() ?? "Student";
+            SubjectsGrades = _userService.GetByIdAsync(user.Id).Result.SubjectsGrades;
 
             Input = new InputModel
             {
@@ -126,5 +137,51 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
         }
+
+
+        public IActionResult OnGetExportStudentGrades()
+        {
+            var user = _userManager.GetUserAsync(User).Result;
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+            LoadAsync(user).Wait();
+
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "GradesTemplate.docx");
+            var document = DocumentModel.Load(templatePath);
+
+            document.Content.Replace("{{StudentName}}", FullName);
+            document.Content.Replace("{{Indeks}}", Indeks);
+
+            var table = new Table(document);
+
+            var headerRow = new TableRow(document);
+            headerRow.Cells.Add(new TableCell(document, "Code"));
+            headerRow.Cells.Add(new TableCell(document, "Subject Name"));
+            headerRow.Cells.Add(new TableCell(document, "Grade"));
+            table.Rows.Add(headerRow);
+
+            foreach (var sg in SubjectsGrades)
+            {
+                if (sg.Grade.HasValue)
+                {
+                    var row = new TableRow(document);
+                    row.Cells.Add(new TableCell(document, sg.Subject.Code));
+                    row.Cells.Add(new TableCell(document, sg.Subject.Name));
+                    row.Cells.Add(new TableCell(document, sg.Grade.ToString()));
+                    table.Rows.Add(row);
+                }
+            }
+            
+            var section = document.Sections[0]; 
+            section.Blocks.Add(table);
+
+            var stream = new MemoryStream();
+            document.Save(stream, new PdfSaveOptions());
+
+            return File(stream.ToArray(), "application/pdf", "Grades.pdf");
+        }
+
     }
 }
