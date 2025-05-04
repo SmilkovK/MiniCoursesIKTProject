@@ -2,16 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using Microsoft.EntityFrameworkCore;
 using MiniCoursesDomain.Identity;
+using MiniCoursesDomain.Entities;
 
 namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
 {
@@ -28,40 +25,22 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public string Username { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Indeks { get; set; }
         public string Role { get; set; }
+        public List<StudentSubject> SubjectsGrades { get; set; }
+        public List<GradedFile> GradedFiles { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -73,11 +52,19 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
 
+            user = await _userManager.Users
+                .Include(u => u.SubjectsGrades)
+                    .ThenInclude(sg => sg.Subject)
+                .Include(u => u.GradedFiles)
+                .FirstOrDefaultAsync(u => u.Id == user.Id);
+
             Username = userName;
             FullName = $"{user.Name} {user.LastName}";
             Email = user.Email;
             Indeks = user.Indeks;
             Role = roles.FirstOrDefault() ?? "Student";
+            SubjectsGrades = user.SubjectsGrades;
+            GradedFiles = user.GradedFiles;
 
             Input = new InputModel
             {
