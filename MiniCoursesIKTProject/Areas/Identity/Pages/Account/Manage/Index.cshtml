@@ -33,36 +33,73 @@
         <div style="max-height: 250px; overflow-y: auto;">
             <table class="table table-borderless">
                 <thead class="fw-bold">
-                    <tr>
-                        <th>Subject name</th>
-                        <th>Year</th>
-                        <th style="width: 100px;">Grade</th>
-                    </tr>
+                <tr>
+                    <th>Subject name</th>
+                    <th>Year</th>
+                    <th style="width: 100px;">Grade</th>
+                </tr>
                 </thead>
                 <tbody>
 
-                    @if (Model.SubjectsGrades.Any())
-                    {
-                        @foreach (var subject in Model.SubjectsGrades)
-                        {
-                            <tr>
-                                <td>@subject.Subject?.Name</td>
-                                <td>
-                                    <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
-                                        @(subject.Grade?.ToString() ?? "Not graded")
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                    else
+                @if (Model.SubjectsGrades.Any())
+                {
+                    @foreach (var subject in Model.SubjectsGrades)
                     {
                         <tr>
-                            <td colspan="2" class="text-center">No enrolled subjects.</td>
+                            <td>@subject.Subject?.Name</td>
+                            <td>@subject.Subject?.Year</td>
+                            <td>
+                                <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
+                                    @(subject.Grade?.ToString() ?? "Not graded")
+                                </div>
+                            </td>
                         </tr>
                     }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="2" class="text-center">No enrolled subjects.</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
+          <h5 class="mb-3">Homeworks</h5>
+        <div style="max-height: 250px; overflow-y: auto;">
+                    <table class="table table-borderless">
+                        <thead class="fw-bold">
+                            <tr>
+                                <th>Subject name</th>
+                                <th>Homework</th>
+                                <th style="width: 100px;">Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        
+                            @if (Model.GradedFiles.Any())
+                            {
+                                @foreach (var file in Model.GradedFiles)
+                                {
+                                    <tr>
+                                        <td>@file.Homework.Subject.Name</td>
+                                        <td>@file.Homework.Title</td>
+                                        <td>
+                                            <div class="bg-white text-center rounded-3 shadow-sm" style="width: 60px;">
+                                                @(file.Grade?.ToString() ?? "Not graded")
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="2" class="text-center">No uploaded homeworks yet</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
     </div>
 </div>

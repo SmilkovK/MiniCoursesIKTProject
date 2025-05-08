@@ -17,6 +17,7 @@ public class GradedFileRepository : IGradedFileRepository
     {
         return await _context.GradedFiles
             .Include(gf => gf.Homework)
+            .OrderByDescending(gf => gf.DateUploaded)
             .ToListAsync();
     }
 
