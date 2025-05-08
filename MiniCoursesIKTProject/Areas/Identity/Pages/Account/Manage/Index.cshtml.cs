@@ -70,6 +70,8 @@ namespace MiniCoursesIKTProject.Areas.Identity.Pages.Account.Manage
                 .Include(u => u.SubjectsGrades)
                     .ThenInclude(sg => sg.Subject)
                 .Include(u => u.GradedFiles)
+                    .ThenInclude(gf => gf.Homework)
+                      .ThenInclude(h => h.Subject)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             Username = userName;

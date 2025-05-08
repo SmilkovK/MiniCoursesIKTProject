@@ -12,4 +12,5 @@ public class GradedFile
     public Homework Homework { get; set; }
     public string UserId { get; set; }
     public User User { get; set; }
+    public DateTime DateUploaded { get; set; } = DateTime.UtcNow;
 }
