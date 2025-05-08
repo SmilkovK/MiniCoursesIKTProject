@@ -6,6 +6,7 @@ using MiniCoursesService.Implementation;
 using Microsoft.AspNetCore.Identity;
 using Azure.Identity;
 using MiniCoursesRepository.Repository.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MiniCoursesIKTProject.Controllers
 {
@@ -15,12 +16,15 @@ namespace MiniCoursesIKTProject.Controllers
         private readonly IUserService _userService;
         private readonly ISubjectRepository _subjectRepository;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<User> _userManager;
 
-        public UsersController(IUserService studentService, RoleManager<IdentityRole> roleManager, ISubjectRepository subjectRepository)
+        public UsersController(IUserService studentService, RoleManager<IdentityRole> roleManager, 
+            ISubjectRepository subjectRepository, UserManager<User> userManager)
         {
             _userService = studentService;
             _roleManager = roleManager;
             _subjectRepository = subjectRepository;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(string selectedRole = "Student,Professor", Guid? subjectId = null)
@@ -45,18 +49,7 @@ namespace MiniCoursesIKTProject.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var roleNames = _roleManager.Roles
-            .Where(r => r.Name == "Editor" || r.Name == "Professor" || r.Name == "Student")
-            .Select(r => r.Name)
-            .ToList();
-
-            var roles = roleNames
-                .Select(role => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
-                {
-                    Value = role,
-                    Text = role
-                })
-                .ToList();
+            var roles = GetRolesSelectList();
 
             ViewBag.Roles = roles;
             return View();
@@ -65,6 +58,14 @@ namespace MiniCoursesIKTProject.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserCreateDto dto)
         {
+            var existingUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("Email", "A user with this email already exists.");
+                ViewBag.Roles = GetRolesSelectList();
+                return View(dto);
+            }
+
             var user = new User
             {
                 UserName = dto.Email,
@@ -76,6 +77,20 @@ namespace MiniCoursesIKTProject.Controllers
 
             await _userService.CreateAsync(user, dto.Password, dto.Role);
             return RedirectToAction("Index");
+        }
+
+        private List<SelectListItem> GetRolesSelectList()
+        {
+            var roleNames = _roleManager.Roles
+                .Where(r => r.Name == "Editor" || r.Name == "Professor" || r.Name == "Student")
+                .Select(r => r.Name)
+                .ToList();
+
+            return roleNames.Select(role => new SelectListItem
+            {
+                Value = role,
+                Text = role
+            }).ToList();
         }
 
         [HttpGet]
