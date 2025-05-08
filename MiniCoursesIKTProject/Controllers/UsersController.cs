@@ -5,6 +5,7 @@ using MiniCoursesDomain.DTO;
 using MiniCoursesService.Implementation;
 using Microsoft.AspNetCore.Identity;
 using Azure.Identity;
+using MiniCoursesRepository.Repository.Interfaces;
 
 namespace MiniCoursesIKTProject.Controllers
 {
@@ -12,15 +13,17 @@ namespace MiniCoursesIKTProject.Controllers
     public class UsersController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ISubjectRepository _subjectRepository;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(IUserService studentService, RoleManager<IdentityRole> roleManager)
+        public UsersController(IUserService studentService, RoleManager<IdentityRole> roleManager, ISubjectRepository subjectRepository)
         {
             _userService = studentService;
             _roleManager = roleManager;
+            _subjectRepository = subjectRepository;
         }
 
-        public async Task<IActionResult> Index(string selectedRole = "Student,Professor")
+        public async Task<IActionResult> Index(string selectedRole = "Student,Professor", Guid? subjectId = null)
         {
             var roles = new List<string> { "Student", "Professor" };
 
@@ -28,10 +31,14 @@ namespace MiniCoursesIKTProject.Controllers
                 ? roles
                 : selectedRole.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()).ToList();
 
-            var usersWithRoles = await _userService.GetUsersByRolesAsync(selectedRoles);
+            var usersWithRoles = await _userService.FilterUsersByRoleAndSubject(selectedRoles, subjectId);
+
+            var subjects = await _subjectRepository.GetAllAsync();
 
             ViewBag.SelectedRole = selectedRole;
             ViewBag.Roles = roles;
+            ViewBag.SubjectId = subjectId;
+            ViewBag.Subjects = subjects;
             return View(usersWithRoles);
         }
 
