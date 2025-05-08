@@ -58,12 +58,6 @@
                 </div>
 
                 <div>
-                    @if (user.Value.Contains("Student"))
-                    {
-                        <span>
-                            <a asp-action="Grades" asp-route-id="@user.Key.Id">Grades</a> |
-                        </span>
-                    }
                     <a asp-action="Edit" asp-route-id="@user.Key.Id">Edit</a> |
                     <a asp-action="Delete" asp-route-id="@user.Key.Id">Delete</a>
                 </div>
