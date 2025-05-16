@@ -1,7 +1,10 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER root
+RUN apt-get update && apt-get install -y libharfbuzz-dev libfontconfig1
+RUN mkdir -p /app/wwwroot/uploads && chown $APP_UID:$APP_UID /app/wwwroot/uploads
+RUN mkdir -p /app/Templates && chown $APP_UID:$APP_UID /app/Templates
 USER $APP_UID
 WORKDIR /app
-RUN mkdir -p /app/wwwroot/uploads && chown $APP_UID:$APP_UID /app/wwwroot/uploads
 EXPOSE 8080
 EXPOSE 8081
 
@@ -23,4 +26,5 @@ RUN dotnet publish "MiniCoursesIKTProject.csproj" -c $BUILD_CONFIGURATION -o /ap
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=build /src/MiniCoursesIKTProject/Templates /app/Templates
 ENTRYPOINT ["dotnet", "MiniCoursesIKTProject.dll"]
