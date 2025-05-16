@@ -136,6 +136,12 @@ else
                 subjectSelect.innerHTML = '<option value="">Select Subjects</option>';
             }
         }
-    </script>
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const semesterType = document.getElementById('SemesterType').value;
+            if (semesterType) {
+                loadSubjects();
+            }
+        });
+    </script>
 }
