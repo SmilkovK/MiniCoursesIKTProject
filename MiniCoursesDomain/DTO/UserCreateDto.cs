@@ -31,8 +31,8 @@ namespace MiniCoursesDomain.DTO
         public string? Indeks { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d).{6,}$", ErrorMessage = "Password must contain at least one letter and one number.")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{6,}$",
+        ErrorMessage = "Password must be at least 6 characters long and contain at least one letter, one number, and one special character.")]
         public string? Password { get; set; }
     }
 }
