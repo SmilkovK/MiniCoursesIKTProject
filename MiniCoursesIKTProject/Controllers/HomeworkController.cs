@@ -115,8 +115,7 @@ public class HomeworkController : Controller
             return NotFound();
         }
 
-        // Get all users
-        var users = await _userRepository.GetAllAsync();
+        var users = await _userRepository.GetAllWithSubjectAsync(homework.SubjectId);
         var userUploads = users.Select(u =>
         {
             var gradedFile = u.GradedFiles.FirstOrDefault(gf => gf.HomeworkId == id);
