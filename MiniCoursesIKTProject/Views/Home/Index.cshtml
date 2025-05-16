@@ -26,11 +26,11 @@
 <h1 class="text-center">All Subjects</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
+    <a asp-action="Create" asp-controller="Subject" class="btn btn-primary">Create New</a>
 </p>
 
 <div class="search-bar-container mb-3">
-    <form method="get" asp-action="Index1" class="form-inline d-flex flex-column">
+    <form method="get" asp-action="Index" class="form-inline d-flex flex-column">
         <input type="text" name="searchQuery" class="form-control mb-2 w-100" placeholder="Search by subject name" value="@searchQuery" />
         <button type="submit" class="btn btn-primary w-100">Search</button>
     </form>
