@@ -24,10 +24,22 @@ namespace MiniCoursesRepository.Repository.Implementation
         {
             return await _userManager.Users
                 .Include(u => u.SemesterApplications)
-                    .ThenInclude(sa => sa.Subjects)
-                        .ThenInclude(ss => ss.Subject)
+                .ThenInclude(sa => sa.Subjects)
+                .ThenInclude(ss => ss.Subject)
                 .Include(u => u.SubjectsGrades)
-                    .ThenInclude(sg => sg.Subject)
+                .ThenInclude(sg => sg.Subject)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetAllWithSubjectAsync(Guid subjectId)
+        {
+            return await _userManager.Users
+                .Include(u => u.SemesterApplications)
+                .ThenInclude(sa => sa.Subjects)
+                .ThenInclude(ss => ss.Subject)
+                .Include(u => u.SubjectsGrades)
+                .ThenInclude(sg => sg.Subject)
+                .Where(u => u.SubjectsGrades.Any(sg => sg.SubjectId == subjectId))
                 .ToListAsync();
         }
 
@@ -35,10 +47,10 @@ namespace MiniCoursesRepository.Repository.Implementation
         {
             return await _userManager.Users
                 .Include(u => u.SemesterApplications)
-                    .ThenInclude(sa => sa.Subjects)
-                        .ThenInclude(ss => ss.Subject)
+                .ThenInclude(sa => sa.Subjects)
+                .ThenInclude(ss => ss.Subject)
                 .Include(u => u.SubjectsGrades)
-                    .ThenInclude(sg => sg.Subject)
+                .ThenInclude(sg => sg.Subject)
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -55,10 +67,10 @@ namespace MiniCoursesRepository.Repository.Implementation
         {
             var existing = await _userManager.Users
                 .Include(u => u.SemesterApplications)
-                    .ThenInclude(sa => sa.Subjects)
-                        .ThenInclude(ss => ss.Subject)
+                .ThenInclude(sa => sa.Subjects)
+                .ThenInclude(ss => ss.Subject)
                 .Include(u => u.SubjectsGrades)
-                    .ThenInclude(sg => sg.Subject)
+                .ThenInclude(sg => sg.Subject)
                 .FirstOrDefaultAsync(u => u.Id == user.Id);
 
             if (existing == null)
