@@ -8,4 +8,5 @@ public class UserUploadViewModel
     public bool IsEnrolled { get; set; }
     public Guid? GradedFileId { get; set; }
     public int? Grade { get; set; }
+    public double? AIPercentage { get; set; }
 }

@@ -34,8 +34,12 @@ builder.Services.AddScoped<IFIleRepository, FIleRepository>();
 builder.Services.AddScoped<IHomeworkRepository, HomeworkRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<IGradedFileRepository, GradedFileRepository>();
+builder.Services.AddScoped<IAICheckerService, AICheckerService>();
+
 
 builder.Services.AddTransient<IUserService, UserService>();
+
+builder.Services.AddHttpClient<AICheckerService>();
 
 var app = builder.Build();
 

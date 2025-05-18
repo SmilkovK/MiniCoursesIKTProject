@@ -164,6 +164,9 @@ namespace MiniCoursesRepository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<double>("AIPercentage")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("DateUploaded")
                         .HasColumnType("timestamp with time zone");
 
