@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MiniCoursesDomain.DTO.ViewModels;
 using MiniCoursesDomain.Entities;
 using MiniCoursesDomain.Identity;
@@ -11,6 +10,7 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using MiniCoursesDomain.Enums;
 using MiniCoursesRepository;
+using MiniCoursesService.Interface;
 
 namespace MiniCoursesIKTProject.Controllers;
 
@@ -22,6 +22,7 @@ public class HomeworkController : Controller
     private readonly IGradedFileRepository _gradedFileRepository;
     private readonly IUserRepository _userRepository;
     private readonly ApplicationDbContext _context;
+    private readonly IAICheckerService _aiCheckerService;
 
     public HomeworkController(
         UserManager<User> userManager,
@@ -29,7 +30,8 @@ public class HomeworkController : Controller
         ISubjectRepository subjectRepository,
         IGradedFileRepository gradedFileRepository,
         IUserRepository userRepository,
-        ApplicationDbContext context)
+        ApplicationDbContext context,
+        IAICheckerService aiCheckerService)
     {
         _userManager = userManager;
         _homeworkRepository = homeworkRepository;
@@ -37,6 +39,7 @@ public class HomeworkController : Controller
         _gradedFileRepository = gradedFileRepository;
         _userRepository = userRepository;
         _context = context;
+        _aiCheckerService = aiCheckerService;
     }
 
     // GET: Homework/Add
@@ -126,20 +129,33 @@ public class HomeworkController : Controller
                 HasUploaded = gradedFile != null,
                 IsEnrolled = u.SubjectsGrades.Any(sg => sg.SubjectId == homework.SubjectId && sg.RequestStatus == SubjectRequestStatus.Accepted),
                 GradedFileId = gradedFile?.Id,
-                Grade = gradedFile?.Grade
+                Grade = gradedFile?.Grade,
+                AIPercentage = gradedFile?.AIPercentage
             };
         }).ToList();
 
         var model = new HomeworkDetailsViewModel
         {
             Id = homework.Id,
+            UserName = homework.CreatedBy.UserName,
             Title = homework.Title,
             Description = homework.Description,
             SubjectName = homework.Subject?.Name,
             CreatedByName = $"{homework.CreatedBy?.Name} {homework.CreatedBy?.LastName}",
             UserUploads = userUploads
         };
-
+        
+        Console.WriteLine("========== USER UPLOADS ==========");
+        foreach (var upload in model.UserUploads)
+        {
+            Console.WriteLine($"User: {upload.UserName}");
+            Console.WriteLine($"- Uploaded: {upload.HasUploaded}");
+            Console.WriteLine($"- AI %: {upload.AIPercentage?.ToString("F1") ?? "N/A"}");
+            Console.WriteLine($"- Grade: {upload.Grade?.ToString() ?? "Not graded"}");
+            Console.WriteLine("----------------------");
+        }
+        
+        
         return View(model);
     }
 
@@ -200,8 +216,10 @@ public class HomeworkController : Controller
             TempData["Error"] = $"Failed to read PDF content: {ex.Message}";
             return RedirectToAction(nameof(Details), new { id = homeworkId });
         }
+
+        var saplingResponse = await _aiCheckerService.IsAIWrittenAsync(pdfText);
         
-        Console.WriteLine(pdfText); //TODO: call the AI API here
+        Console.WriteLine($"The provided text was {saplingResponse * 100}% likely AI generated.");
 
         var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
         if (!Directory.Exists(uploadsDir))
@@ -226,7 +244,8 @@ public class HomeworkController : Controller
             HomeworkId = homeworkId,
             Homework = homework,
             UserId = user.Id,
-            User = user
+            User = user,
+            AIPercentage = saplingResponse
         };
 
         await _gradedFileRepository.AddAsync(gradedFile);

@@ -13,4 +13,6 @@ public class GradedFile
     public string UserId { get; set; }
     public User User { get; set; }
     public DateTime DateUploaded { get; set; } = DateTime.UtcNow;
+    
+    public double AIPercentage { get; set; }
 }
