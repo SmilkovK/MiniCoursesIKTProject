@@ -11,7 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<User>
         : base(options)
     {
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -19,12 +19,25 @@ public class ApplicationDbContext : IdentityDbContext<User>
             .ToTable("Subject")
             .HasOne(s => s.Professor)
             .WithMany()
-            .HasForeignKey(s => s.ProfessorId);
-        
+            .HasForeignKey(s => s.ProfessorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<SemesterApplication>()
             .HasMany(sa => sa.Subjects)
-            .WithOne() //
+            .WithOne()
             .HasForeignKey("SemesterApplicationId");
+
+        modelBuilder.Entity<Homework>()
+            .HasOne(h => h.Subject)
+            .WithMany(s => s.Homework)
+            .HasForeignKey(h => h.SubjectId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Homework>()
+            .HasOne(h => h.CreatedBy)
+            .WithMany()
+            .HasForeignKey(h => h.CreatedById)
+            .OnDelete(DeleteBehavior.Restrict); // No cascade
     }
 
     public DbSet<GradedFile> GradedFiles { get; set; }

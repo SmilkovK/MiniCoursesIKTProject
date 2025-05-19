@@ -14,7 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
@@ -130,7 +130,7 @@ using (var scope = app.Services.CreateScope())
         await UserManager.CreateAsync(user3, passwrod2);
         await UserManager.AddToRoleAsync(user3, "Student");
     }
-    
+
     if (await UserManager.FindByEmailAsync(professor1) == null)
     {
         var user4 = new User
